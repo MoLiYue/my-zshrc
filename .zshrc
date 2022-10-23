@@ -1,3 +1,32 @@
+# 代理
+export ALL_PROXY=127.0.0.1:7890
+# export HTTP_PROXY=192.168.0.108:8899
+# export HTTPS_PROXY=192.168.0.108:8899
+# export SOCKS5_PROXY=192.168.0.108:9988
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+### End of Zinit's installer chunk
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -5,47 +34,44 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Created by newuser for 5.8.1
-if [[ ! -f $HOME/.zi/bin/zi.zsh ]]; then
-  print -P "%F{33}▓▒░ %F{160}Installing (%F{33}z-shell/zi%F{160})…%f"
-  command mkdir -p "$HOME/.zi" && command chmod g-rwX "$HOME/.zi"
-  command git clone -q --depth=1 --branch "main" https://github.com/z-shell/zi "$HOME/.zi/bin" && \
-    print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
-    print -P "%F{160}▓▒░ The clone has failed.%f%b"
-fi
-source "$HOME/.zi/bin/zi.zsh"
-autoload -Uz _zi
-(( ${+_comps} )) && _comps[zi]=_zi
-# examples here -> https://z-shell.pages.dev/docs/gallery/collection
-zicompinit # <- https://z-shell.pages.dev/docs/gallery/collection#minimal
-zi light-mode for \
-  z-shell/z-a-meta-plugins \
-  @annexes @molovo
-
 zi load z-shell/H-S-MW
-
 
 #zsh插件
 zi light zsh-users/zsh-completions
-zi light zsh-users/zsh-syntax-highlighting
+zi light zdharma/fast-syntax-highlighting
+# zi light zsh-users/zsh-syntax-highlighting
 zi light zsh-users/zsh-autosuggestions
+zi light DarrinTisdale/zsh-aliases-exa
+zi light Aloxaf/fzf-tab
 
-
-#导入OMZ
-zi snippet https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/clipboard.zsh
-zi snippet https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/termsupport.zsh
-
-#安装theme的前置内容
+### 安装theme的前置内容
+## Oh My Zsh Setting
+ZSH_THEME="powerlevel10k/powerlevel10k"
+## Zinit Setting
+# Must Load OMZ Git library
 zi snippet OMZL::git.zsh
+# Load Git plugin from OMZ
 zi snippet OMZP::git
-zi cdclear -q
-
+zi cdclear -q # <- forget completions provided up to this moment
 #设置theme
 setopt promptsubst
+# Load Prompt
 zi light romkatv/powerlevel10k
-ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# zinit snippet <URL>        # Raw Syntax with URL
+# zinit snippet OMZ::<PATH>  # Shorthand OMZ/ (https://github.com/ohmyzsh/ohmyzsh/raw/master/)
+# zinit snippet OMZL::<PATH> # Shorthand OMZ/lib/
+# zinit snippet OMZT::<PATH> # Shorthand OMZ/themes/
+# zinit snippet OMZP::<PATH> # Shorthand OMZ/plugins/
 
 #OMZ插件
+zi snippet OMZL::clipboard.zsh
+zi snippet OMZL::termsupport.zsh
+zi snippet OMZL::completion.zsh
+zi snippet OMZL::history.zsh
+zi snippet OMZL::key-bindings.zsh
+zi snippet OMZL::theme-and-appearance.zsh
+
 zi snippet OMZP::dotenv
 zi snippet OMZP::rake
 zi snippet OMZP::rbenv
@@ -57,28 +83,28 @@ zi snippet OMZP::sudo
 zi snippet OMZP::rails
 zi snippet OMZP::textmate
 zi snippet OMZP::lighthouse
+zi snippet OMZP::gitignore
+zi snippet OMZP::colored-man-pages
+zi snippet OMZP::cp
+zi snippet OMZP::brew
 
 #zsh自动填充
 setopt AUTO_PUSHD
 
-
-
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-#----------------------------------------------------exa使用------------------------------------------------------------
-zi light DarrinTisdale/zsh-aliases-exa
+# 一些指令重写
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+alias ra='ranger'
 
-# general use
-alias ls='exa'                                                         # ls
-alias l='exa -lbF --git'                                               # list, size, type, git
-alias ll='exa -lbGF --git'                                             # long list
-alias llm='exa -lbGF --git --sort=modified'                            # long list, modified date sort
-alias la='exa -lbhHigUmuSa --time-style=long-iso --git --color-scale'  # all list
-alias lx='exa -lbhHigUmuSa@ --time-style=long-iso --git --color-scale' # all + extended list
-
-# speciality views
-alias lS='exa -1'                                                      # one column, just names
-alias lt='exa --tree --level=2'                                        # tree
-#-----------------------------------------------------------------------------------------------------------------------
+# 一些环境变量
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home
+export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
+export EDITOR=/opt/homebrew/bin/nvim
