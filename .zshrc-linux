@@ -41,8 +41,11 @@ zi light zsh-users/zsh-completions
 zi light zdharma/fast-syntax-highlighting
 # zi light zsh-users/zsh-syntax-highlighting
 zi light zsh-users/zsh-autosuggestions
-zi light DarrinTisdale/zsh-aliases-exa
 zi light Aloxaf/fzf-tab
+
+# exa is not maintained and mv to eza
+# zi light DarrinTisdale/zsh-aliases-exa
+zi light z-shell/zsh-eza
 
 ### 安装theme的前置内容
 ## Oh My Zsh Setting
@@ -98,10 +101,10 @@ setopt AUTO_PUSHD
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias grep='grep --color=auto'
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
-alias ls='ls --color=auto'
+# alias l='ls -CF'
+# alias la='ls -A'
+# alias ll='ls -alF'
+# alias ls='ls --color=auto'
 alias ra='ranger'
 
 # 一些环境变量
