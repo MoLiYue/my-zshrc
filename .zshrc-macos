@@ -42,19 +42,26 @@ zi light zdharma/fast-syntax-highlighting
 # zi light zsh-users/zsh-syntax-highlighting
 zi light zsh-users/zsh-autosuggestions
 zi light DarrinTisdale/zsh-aliases-exa
-zi light Aloxaf/fzf-tab
+# zi light Aloxaf/fzf-tab
 
 ### 安装theme的前置内容
+
 ## Oh My Zsh Setting
 ZSH_THEME="powerlevel10k/powerlevel10k"
+
 ## Zinit Setting
+
 # Must Load OMZ Git library
 zi snippet OMZL::git.zsh
+
 # Load Git plugin from OMZ
 zi snippet OMZP::git
+zi snippet OMZP::urltools
 zi cdclear -q # <- forget completions provided up to this moment
+
 #设置theme
 setopt promptsubst
+
 # Load Prompt
 zi light romkatv/powerlevel10k
 
@@ -65,12 +72,13 @@ zi light romkatv/powerlevel10k
 # zinit snippet OMZP::<PATH> # Shorthand OMZ/plugins/
 
 #OMZ插件
-zi snippet OMZL::clipboard.zsh
-zi snippet OMZL::termsupport.zsh
+zi snippet OMZL::clipboard.zsh		    # without omz_urlencode
 zi snippet OMZL::completion.zsh
 zi snippet OMZL::history.zsh
-zi snippet OMZL::key-bindings.zsh
-zi snippet OMZL::theme-and-appearance.zsh
+zi snippet OMZL::key-bindings.zsh	    # without omz_urlencode
+zi snippet OMZL::theme-and-appearance.zsh   # without omz_urlencode
+zi snippet OMZL::functions.zsh
+zi snippet OMZL::termsupport.zsh	    # with omz_urlencode
 
 zi snippet OMZP::dotenv
 zi snippet OMZP::rake
@@ -87,6 +95,8 @@ zi snippet OMZP::gitignore
 zi snippet OMZP::colored-man-pages
 zi snippet OMZP::cp
 zi snippet OMZP::brew
+zi snippet OMZP::npm
+# zi snippet OMZP::tmux
 
 #zsh自动填充
 setopt AUTO_PUSHD
@@ -104,7 +114,7 @@ alias ll='ls -alF'
 alias ls='ls --color=auto'
 alias ra='ranger'
 
-# 一些环境变量
+# MacOS上的一些环境变量
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home
 export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
 export EDITOR=/opt/homebrew/bin/nvim
