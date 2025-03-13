@@ -163,6 +163,10 @@ fi
 
 alias ra='ranger'
 
+cheat() {
+  curl "cheat.sh/$*"
+}
+
 # Check if 'thefuck' is installed; if so, initialize its alias.
 if command -v thefuck >/dev/null 2>&1; then
   eval "$(thefuck --alias)"
