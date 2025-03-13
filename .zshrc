@@ -75,7 +75,12 @@ $PLUGIN_CMD light zsh-users/zsh-autosuggestions
 
 # exa is no longer maintained; using eza as a replacement
 # $PLUGIN_CMD light DarrinTisdale/zsh-aliases-exa  # Deprecated exa version
-$PLUGIN_CMD light z-shell/zsh-eza
+# Check if 'eza' is installed; if so, load the z-shell/zsh-eza plugin.
+if command -v eza >/dev/null 2>&1; then
+  $PLUGIN_CMD light z-shell/zsh-eza
+else
+  echo "eza not found, skipping z-shell/zsh-eza plugin load."
+fi
 
 # Optional plugin (e.g., fzf-tab can be enabled if desired)
 # $PLUGIN_CMD light Aloxaf/fzf-tab
@@ -124,7 +129,12 @@ $PLUGIN_CMD snippet OMZP::npm
 
 # Custom aliases and tools
 alias ra='ranger'
-eval "$(thefuck --alias)"
+# Check if 'thefuck' is installed; if so, initialize its alias.
+if command -v thefuck >/dev/null 2>&1; then
+  eval "$(thefuck --alias)"
+else
+  echo "thefuck command not found, skipping alias initialization."
+fi
 
 #############################
 # OS Specific Configuration
