@@ -157,12 +157,21 @@ $PLUGIN_CMD snippet OMZP::npm
 # $PLUGIN_CMD snippet OMZP::tmux
 
 # Custom aliases and tools
+if [[ "$COMPANY_MACHINE" == "1" ]]; then
+  alias ranger='python3 /repo/ehexyil/ranger/ranger.py --selectfile=$PWD'
+fi
+
 alias ra='ranger'
+
 # Check if 'thefuck' is installed; if so, initialize its alias.
 if command -v thefuck >/dev/null 2>&1; then
   eval "$(thefuck --alias)"
 else
   echo "thefuck command not found, skipping alias initialization."
+  if [[ "$COMPANY_MACHINE" == "1" ]]; then
+    echo "install thefuck."
+    pip install thefuck
+  fi
 fi
 
 #############################
