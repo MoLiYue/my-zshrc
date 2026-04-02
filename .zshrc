@@ -2,28 +2,40 @@ COMPANY_MACHINE=1
 
 # 判断是否为公司机器（这里假设 COMPANY_MACHINE=1 表示公司机器）
 if [[ "$COMPANY_MACHINE" == "1" ]]; then
-  # 追加公司专用的 MODULEPATH
-  export MODULEPATH="${MODULEPATH}:/app/modules/0/modulefiles:/home/ehexyil/.afs/0/rmodules:/home/ehexyil/.afs/0/pmodules:/env/sero/modules:/env/common/modules"
 
-  # 加载 Modules 系统的 zsh 初始化脚本
-  source /usr/share/Modules/init/zsh
-
-  # 定义 module 命令函数（如果没有自动定义）
-  module () {
-      {
-          eval `/app/modules/0/bin/modulecmd zsh "$@"`
-      } 2>&1
-  }
-
-  # 如果用户目录下存在 .modules 文件，则加载
-  if [[ -f $HOME/.modules ]]; then
-    source $HOME/.modules
+  if [ -r /etc/home/zshrc -a -d /env ]; then
+   # MWP: use ARC environment
+   . /etc/home/zshrc
+  elif [ -r $HOME/.zshrc.old ]; then
+   # fall back to legacy environment
+   . $HOME/.zshrc.old
   fi
+
+#   # 追加公司专用的 MODULEPATH
+#   export MODULEPATH="${MODULEPATH}:/app/modules/0/modulefiles:/home/ehexyil/.afs/0/rmodules:/home/ehexyil/.afs/0/pmodules:/env/sero/modules:/env/common/modules"
+
+#   # 加载 Modules 系统的 zsh 初始化脚本
+#   source /usr/share/Modules/init/zsh
+
+#   # 定义 module 命令函数（如果没有自动定义）
+#   module () {
+#       {
+#           eval `/app/modules/0/bin/modulecmd zsh "$@"`
+#       } 2>&1
+#   }
+
+#   # 如果用户目录下存在 .modules 文件，则加载
+#   if [[ -f $HOME/.modules ]]; then
+#     source $HOME/.modules
+#   fi
 
   # Add ~/bin to PATH if it exists
   if [ -d "$HOME/bin" ]; then
     export PATH="$HOME/bin:$PATH"
   fi
+
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+  export EDITOR=nvim
 
 fi
 
@@ -141,9 +153,8 @@ $PLUGIN_CMD snippet OMZP::dotenv
 $PLUGIN_CMD snippet OMZP::rake
 $PLUGIN_CMD snippet OMZP::rbenv
 $PLUGIN_CMD snippet OMZP::ruby
-$PLUGIN_CMD snippet OMZP::autojump
 $PLUGIN_CMD snippet OMZP::pip
-$PLUGIN_CMD snippet OMZP::sublime
+# $PLUGIN_CMD snippet OMZP::sublime
 $PLUGIN_CMD snippet OMZP::sudo
 $PLUGIN_CMD snippet OMZP::rails
 $PLUGIN_CMD snippet OMZP::textmate
@@ -158,10 +169,17 @@ $PLUGIN_CMD snippet OMZP::npm
 
 # Custom aliases and tools
 if [[ "$COMPANY_MACHINE" == "1" ]]; then
-  alias ranger='python3 /repo/ehexyil/ranger/ranger.py --selectfile=$PWD'
+  alias sw='/app/epg/tools/bin/sw'
+  export CONTAINER=podman
+  # export CONTAINER=docker2podman
 fi
 
-alias ra='ranger'
+# ranger yazi
+alias ra='yazi'
+alias yz='yazi'
+
+# autojump
+eval "$(zoxide init zsh --cmd j)"
 
 cheat() {
   curl "cheat.sh/$*"
