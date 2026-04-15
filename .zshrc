@@ -189,14 +189,27 @@ if [[ "$COMPANY_MACHINE" == "1" ]]; then
   alias sw='/app/epg/tools/bin/sw'
   export CONTAINER=podman
   # export CONTAINER=docker2podman
+  if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'
+  else
+    echo "ripgrep (rg) not found, skipping grep alias."
+  fi
 fi
 
 # ranger yazi
-alias ra='yazi'
-alias yz='yazi'
+if command -v yazi >/dev/null 2>&1; then
+  alias ra='yazi'
+  alias yz='yazi'
+else
+  echo "yazi not found, skipping yazi aliases."
+fi
 
 # autojump
-eval "$(zoxide init zsh --cmd j)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh --cmd j)"
+else
+  echo "zoxide not found, skipping zoxide initialization."
+fi
 
 cheat() {
   curl "cheat.sh/$*"
