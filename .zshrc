@@ -39,6 +39,23 @@ if [[ "$COMPANY_MACHINE" == "1" ]]; then
 
 fi
 
+#############################
+# OS Specific Configuration
+#############################
+os=$(uname)
+
+if [[ $os == "Darwin" ]]; then
+  # macOS specific settings
+  export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home"
+  # Uncomment the following line if using an older Node version:
+  # export PATH="/opt/homebrew/Cellar/node@16/bin:$PATH"
+  export PATH="/opt/homebrew/Cellar/node/21.7.1/bin:$PATH"
+  export EDITOR="/opt/homebrew/bin/nvim"
+elif [[ $os == "Linux" ]]; then
+  # Linux specific settings (add your Linux configurations here)
+  :
+fi
+
 # ---------------------------
 # Choose Plugin Manager:
 # Set ZSH_PLUGIN_MANAGER to "ZI" for Zi or "ZINIT" for Zinit.
@@ -194,21 +211,4 @@ else
     echo "install thefuck."
     pip install thefuck
   fi
-fi
-
-#############################
-# OS Specific Configuration
-#############################
-os=$(uname)
-
-if [[ $os == "Darwin" ]]; then
-  # macOS specific settings
-  export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home"
-  # Uncomment the following line if using an older Node version:
-  # export PATH="/opt/homebrew/Cellar/node@16/bin:$PATH"
-  export PATH="/opt/homebrew/Cellar/node/21.7.1/bin:$PATH"
-  export EDITOR="/opt/homebrew/bin/nvim"
-elif [[ $os == "Linux" ]]; then
-  # Linux specific settings (add your Linux configurations here)
-  :
 fi
