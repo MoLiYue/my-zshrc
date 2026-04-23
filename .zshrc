@@ -24,26 +24,28 @@ fi
 #############################
 os=$(uname)
 
-if [[ $os == "Darwin" ]]; then
-  # macOS specific settings
-  export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home"
-  export PATH="/opt/homebrew/Cellar/node/21.7.1/bin:$PATH"
-  export EDITOR="/opt/homebrew/bin/nvim"
+if [[ "$COMPANY_MACHINE" == "0" ]]; then
+  if [[ $os == "Darwin" ]]; then
+    # macOS specific settings
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home"
+    export PATH="/opt/homebrew/Cellar/node/21.7.1/bin:$PATH"
+    export EDITOR="/opt/homebrew/bin/nvim"
 
-elif [[ $os == "Linux" ]]; then
-  # archlinux setup pyenv for multiple python versions
-  export PYENV_ROOT="$HOME/.pyenv"
-  command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+  elif [[ $os == "Linux" ]]; then
+    # archlinux setup pyenv for multiple python versions
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 
-  if command -v pyenv >/dev/null 2>&1; then
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-  else
-    print -P "%F{yellow}pyenv not found, skipping pyenv initialization.%f"
+    if command -v pyenv >/dev/null 2>&1; then
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    else
+      print -P "%F{yellow}pyenv not found, skipping pyenv initialization.%f"
+    fi
+
+    export PATH="$HOME/.local/bin:$PATH"
+    export EDITOR=nvim
   fi
-
-  export PATH="$HOME/.local/bin:$PATH"
-  export EDITOR=nvim
 fi
 
 # ---------------------------
