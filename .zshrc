@@ -11,32 +11,12 @@ if [[ "$COMPANY_MACHINE" == "1" ]]; then
    . $HOME/.zshrc.old
   fi
 
-#   # 追加公司专用的 MODULEPATH
-#   export MODULEPATH="${MODULEPATH}:/app/modules/0/modulefiles:/home/ehexyil/.afs/0/rmodules:/home/ehexyil/.afs/0/pmodules:/env/sero/modules:/env/common/modules"
-
-#   # 加载 Modules 系统的 zsh 初始化脚本
-#   source /usr/share/Modules/init/zsh
-
-#   # 定义 module 命令函数（如果没有自动定义）
-#   module () {
-#       {
-#           eval `/app/modules/0/bin/modulecmd zsh "$@"`
-#       } 2>&1
-#   }
-
-#   # 如果用户目录下存在 .modules 文件，则加载
-#   if [[ -f $HOME/.modules ]]; then
-#     source $HOME/.modules
-#   fi
-
   # Add ~/bin to PATH if it exists
   if [ -d "$HOME/bin" ]; then
     export PATH="$HOME/bin:$PATH"
   fi
 
-  typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
   export EDITOR=nvim
-
 fi
 
 #############################
@@ -47,18 +27,20 @@ os=$(uname)
 if [[ $os == "Darwin" ]]; then
   # macOS specific settings
   export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-18.0.2.jdk/Contents/Home"
-  # Uncomment the following line if using an older Node version:
-  # export PATH="/opt/homebrew/Cellar/node@16/bin:$PATH"
   export PATH="/opt/homebrew/Cellar/node/21.7.1/bin:$PATH"
   export EDITOR="/opt/homebrew/bin/nvim"
-elif [[ $os == "Linux" ]]; then
-  # Linux specific settings (add your Linux configurations here)
 
+elif [[ $os == "Linux" ]]; then
   # archlinux setup pyenv for multiple python versions
   export PYENV_ROOT="$HOME/.pyenv"
   command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
+
+  if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+  else
+    print -P "%F{yellow}pyenv not found, skipping pyenv initialization.%f"
+  fi
 
   export PATH="$HOME/.local/bin:$PATH"
   export EDITOR=nvim
@@ -76,7 +58,13 @@ if [[ "$ZSH_PLUGIN_MANAGER" == "ZI" ]]; then
   #############################
   typeset -A ZI
   ZI[BIN_DIR]="${HOME}/.zi/bin"
-  source "${ZI[BIN_DIR]}/zi.zsh"
+
+  if [[ -f "${ZI[BIN_DIR]}/zi.zsh" ]]; then
+    source "${ZI[BIN_DIR]}/zi.zsh"
+  else
+    print -P "%F{red}Zi not found at ${ZI[BIN_DIR]}/zi.zsh%f"
+    return 1
+  fi
 
   # Enable Zi autocompletion
   autoload -Uz _zi
@@ -101,7 +89,7 @@ elif [[ "$ZSH_PLUGIN_MANAGER" == "ZINIT" ]]; then
   PLUGIN_CMD="zinit"
 
 else
-  echo "Unknown ZSH_PLUGIN_MANAGER value: $ZSH_PLUGIN_MANAGER. Please set it to either 'ZI' or 'ZINIT'."
+  print -P "%F{red}Unknown ZSH_PLUGIN_MANAGER value: $ZSH_PLUGIN_MANAGER. Please set it to either 'ZI' or 'ZINIT'.%f"
   return 1
 fi
 
@@ -114,38 +102,19 @@ fi
 # ---------------------------
 
 #############################
-# Powerlevel10k Theme Setup
-#############################
-# Enable Powerlevel10k instant prompt for faster startup (keep near the top)
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# Load Powerlevel10k with shallow clone for speed (depth=1)
-$PLUGIN_CMD ice depth=1
-$PLUGIN_CMD light romkatv/powerlevel10k
-
-# Source user-specific Powerlevel10k configuration if it exists
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-#############################
 # Common Zsh Plugin Configuration
 #############################
 # Standard plugins for a better shell experience
 $PLUGIN_CMD light z-shell/H-S-MW
 $PLUGIN_CMD light zsh-users/zsh-completions
 $PLUGIN_CMD light zdharma/fast-syntax-highlighting
-# Alternatively, you can use the official syntax highlighting:
-# $PLUGIN_CMD light zsh-users/zsh-syntax-highlighting
 $PLUGIN_CMD light zsh-users/zsh-autosuggestions
 
 # exa is no longer maintained; using eza as a replacement
-# $PLUGIN_CMD light DarrinTisdale/zsh-aliases-exa  # Deprecated exa version
-# Check if 'eza' is installed; if so, load the z-shell/zsh-eza plugin.
 if command -v eza >/dev/null 2>&1; then
   $PLUGIN_CMD light z-shell/zsh-eza
 else
-  echo "eza not found, skipping z-shell/zsh-eza plugin load."
+  print -P "%F{yellow}eza not found, skipping z-shell/zsh-eza plugin load.%f"
 fi
 
 # Optional plugin (e.g., fzf-tab can be enabled if desired)
@@ -165,13 +134,13 @@ $PLUGIN_CMD snippet OMZP::urltools
 $PLUGIN_CMD cdclear -q
 
 # Load additional common snippets
-$PLUGIN_CMD snippet OMZL::clipboard.zsh         # Clipboard management
-$PLUGIN_CMD snippet OMZL::completion.zsh          # Command completions
-$PLUGIN_CMD snippet OMZL::history.zsh             # Command history
-$PLUGIN_CMD snippet OMZL::key-bindings.zsh        # Key bindings
-$PLUGIN_CMD snippet OMZL::theme-and-appearance.zsh  # Theme and appearance
-$PLUGIN_CMD snippet OMZL::functions.zsh           # Common functions
-$PLUGIN_CMD snippet OMZL::termsupport.zsh         # Terminal support
+$PLUGIN_CMD snippet OMZL::clipboard.zsh
+$PLUGIN_CMD snippet OMZL::completion.zsh
+$PLUGIN_CMD snippet OMZL::history.zsh
+$PLUGIN_CMD snippet OMZL::key-bindings.zsh
+$PLUGIN_CMD snippet OMZL::theme-and-appearance.zsh
+$PLUGIN_CMD snippet OMZL::functions.zsh
+$PLUGIN_CMD snippet OMZL::termsupport.zsh
 
 # Load Oh My Zsh plugin snippets
 $PLUGIN_CMD snippet OMZP::dotenv
@@ -189,18 +158,19 @@ $PLUGIN_CMD snippet OMZP::colored-man-pages
 $PLUGIN_CMD snippet OMZP::cp
 $PLUGIN_CMD snippet OMZP::brew
 $PLUGIN_CMD snippet OMZP::npm
-# If needed, you can enable a tmux-related snippet:
 # $PLUGIN_CMD snippet OMZP::tmux
 
+#############################
 # Custom aliases and tools
+#############################
 if [[ "$COMPANY_MACHINE" == "1" ]]; then
   alias sw='/app/epg/tools/bin/sw'
   export CONTAINER=podman
-  # export CONTAINER=docker2podman
+
   if command -v rg >/dev/null 2>&1; then
     alias grep='rg'
   else
-    echo "ripgrep (rg) not found, skipping grep alias."
+    print -P "%F{yellow}ripgrep (rg) not found, skipping grep alias.%f"
   fi
 fi
 
@@ -209,14 +179,14 @@ if command -v yazi >/dev/null 2>&1; then
   alias ra='yazi'
   alias yz='yazi'
 else
-  echo "yazi not found, skipping yazi aliases."
+  print -P "%F{yellow}yazi not found, skipping yazi aliases.%f"
 fi
 
-# autojump
+# autojump / zoxide
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh --cmd j)"
 else
-  echo "zoxide not found, skipping zoxide initialization."
+  print -P "%F{yellow}zoxide not found, skipping zoxide initialization.%f"
 fi
 
 cheat() {
@@ -227,9 +197,24 @@ cheat() {
 if command -v thefuck >/dev/null 2>&1; then
   eval "$(thefuck --alias)"
 else
-  echo "thefuck command not found, skipping alias initialization."
+  print -P "%F{yellow}thefuck command not found, skipping alias initialization.%f"
   if [[ "$COMPANY_MACHINE" == "1" ]]; then
-    echo "install thefuck."
+    print -P "%F{yellow}install thefuck.%f"
     pip install thefuck
   fi
+fi
+
+#############################
+# Welcome Output
+#############################
+# 保留你的输出
+[[ -o interactive ]] && fastfetch
+
+#############################
+# Starship Prompt
+#############################
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  print -P "%F{red}starship not found, prompt will fall back to default zsh prompt.%f"
 fi
