@@ -1,4 +1,4 @@
-COMPANY_MACHINE=1
+COMPANY_MACHINE=0
 
 # 判断是否为公司机器（这里假设 COMPANY_MACHINE=1 表示公司机器）
 if [[ "$COMPANY_MACHINE" == "1" ]]; then
@@ -53,7 +53,15 @@ if [[ $os == "Darwin" ]]; then
   export EDITOR="/opt/homebrew/bin/nvim"
 elif [[ $os == "Linux" ]]; then
   # Linux specific settings (add your Linux configurations here)
-  :
+
+  # archlinux setup pyenv for multiple python versions
+  export PYENV_ROOT="$HOME/.pyenv"
+  command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+
+  export PATH="$HOME/.local/bin:$PATH"
+  export EDITOR=nvim
 fi
 
 # ---------------------------
